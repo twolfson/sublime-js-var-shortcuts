@@ -8,13 +8,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
             return self.run_default()
 
         # Determine which selections are in a `var` block
-        """
-        // We are only supporting the comma-last format to start
-        // However, they all should be detectable via being between a `var` and a `;`
-        var abc;
-        var abc,
-            def;
-        """
+        # DEV: This is determined by being between a `var` and a `;`
 
         # If all selections are in a `var` block
             # Map the selections for a varible
