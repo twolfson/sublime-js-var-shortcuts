@@ -30,15 +30,17 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
             return var_region
         selected_var_regions = map(find_var_region, selected_regions)
 
-        print selected_var_regions
-
         # If all selections are in a `var` block
+        if all(selected_var_regions):
+            pass
             # Map the selections for a varible
             # Filter out repeated selections
             # Delete the selected variable from each block
 
         # Otherwise, if all selections are not in a `var` block
+        elif not any(selected_var_regions):
             # Run the default command
+            self.run_default()
 
     def run_default(self):
         self.view.run_command("run_macro_file", {
