@@ -72,11 +72,14 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                 # DEV: This check is intended for the multiple selected variables case
                 if variable_region:
                     variable_regions.append(variable_region)
-                    print view.substr(variable_region)
 
-            # Filter out repeated selections
-            print variable_regions
+            # Combine all regions
+            collective_regions = variable_regions.pop()
+            for variable_region in variable_regions:
+                collective_regions = collective_regions.cover(variable_region)
+
             # Delete the selected variable from each block
+            view.erase(edit, collective_regions)
 
         # Otherwise, if all selections are not in a `var` block
         elif not any(selected_var_regions):
