@@ -10,6 +10,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
 
         # Determine which selections are in a `var` block
         # DEV: This is determined by being between a `var` and a `;`
+        # DEV: If this fails, use esprima to detect var blocks and return locations
         content_region = sublime.Region(0, view.size())
         content = view.substr(content_region)
         print content
