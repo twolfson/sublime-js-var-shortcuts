@@ -1,3 +1,4 @@
+import sublime
 import sublime_plugin
 
 class JsVarDeleteCommand(sublime_plugin.TextCommand):
@@ -9,6 +10,9 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
 
         # Determine which selections are in a `var` block
         # DEV: This is determined by being between a `var` and a `;`
+        content_region = sublime.Region(0, view.size())
+        content = view.substr(content_region)
+        print content
 
         # If all selections are in a `var` block
             # Map the selections for a varible
