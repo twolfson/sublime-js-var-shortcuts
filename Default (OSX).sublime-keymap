@@ -1,0 +1,11 @@
+[
+  {
+    "keys": ["super+k", "super+backspace"],
+    "command": "js_var_delete"
+  // },
+  // {
+  //   "keys": ["alt+z"],
+  //   // "keys": ["super+k", "super+tab"],
+  //   "command": "js_var_insert"
+  }
+]
