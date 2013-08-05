@@ -49,10 +49,17 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                 variable_region = None
 
                 # Find all of the variable chunk in our `var` block
-                for match in re.finditer(r'(var|,)[^,;]+;?', var_content):
+                for match in re.finditer(r'(var|,)[^,;]+', var_content):
+                    # Get the start and end
+                    match_end = match.end()
+
+                    # If the match began with a `var`, include the next letter
+                    if (match.group(1) == 'var'):
+                        match_end += 1
+
                     # Generate a region for the variable
                     matched_region = sublime.Region(var_region_start + match.start(),
-                                                    var_region_start + match.end())
+                                                    var_region_start + match_end)
 
                     # If the matched region *contains* the selected region (meaning full encapsulation)
                     # TODO: For multiple variables selected, we will prob be on esprima
@@ -65,6 +72,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                 # DEV: This check is intended for the multiple selected variables case
                 if variable_region:
                     variable_regions.append(variable_region)
+                    print view.substr(variable_region)
 
             # Filter out repeated selections
             print variable_regions
