@@ -73,9 +73,9 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                         variable_region = matched_region
                         break
 
-                for match in re.finditer(r',([^,;]+[,;])', var_content):
+                for match in re.finditer(r',([^,;]+)', var_content):
                     matched_region = sublime.Region(var_region_start + match.start(),
-                                                    var_region_start + match.end() - 1)
+                                                    var_region_start + match.end())
                     if matched_region.contains(selected_region):
                         variable_region = matched_region
                         break
