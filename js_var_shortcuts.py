@@ -49,21 +49,33 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                 variable_region = None
 
                 # Find all of the variable chunk in our `var` block
-                for match in re.finditer(r'(var|,)[^,;]+', var_content):
-                    # Get the start and end
-                    match_end = match.end()
-
-                    # If the match began with a `var`, include the next letter
-                    if (match.group(1) == 'var'):
-                        match_end += 1
-
+                for match in re.finditer(r'var([^,;]+,\s*)', var_content):
                     # Generate a region for the variable
                     matched_region = sublime.Region(var_region_start + match.start(),
-                                                    var_region_start + match_end)
+                                                    var_region_start + match.end())
 
                     # If the matched region *contains* the selected region (meaning full encapsulation)
                     # TODO: For multiple variables selected, we will prob be on esprima
                     # TODO: and it should be an intersection which collects onto an array of regions
+                    if matched_region.contains(selected_region):
+                        # Remove `var ` from deletion
+                        matched_region = sublime.Region(matched_region.begin() + 4,
+                                                        matched_region.end())
+
+                        # Save the region
+                        variable_region = matched_region
+                        break
+
+                for match in re.finditer(r'var([^,;]+;)', var_content):
+                    matched_region = sublime.Region(var_region_start + match.start(),
+                                                    var_region_start + match.end())
+                    if matched_region.contains(selected_region):
+                        variable_region = matched_region
+                        break
+
+                for match in re.finditer(r',([^,;]+[,;])', var_content):
+                    matched_region = sublime.Region(var_region_start + match.start(),
+                                                    var_region_start + match.end() - 1)
                     if matched_region.contains(selected_region):
                         variable_region = matched_region
                         break
@@ -74,12 +86,13 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                     variable_regions.append(variable_region)
 
             # Combine all regions
-            collective_regions = variable_regions.pop()
+            collective_regions = variable_regions.pop() if variable_regions else None
             for variable_region in variable_regions:
                 collective_regions = collective_regions.cover(variable_region)
 
             # Delete the selected variable from each block
-            view.erase(edit, collective_regions)
+            if collective_regions:
+                view.erase(edit, collective_regions)
 
         # Otherwise, if all selections are not in a `var` block
         elif not any(selected_var_regions):
