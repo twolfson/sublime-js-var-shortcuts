@@ -1,0 +1,41 @@
+{
+  "name": "sublime-js-var-shortcuts",
+  "description": "JS var shortcuts for Sublime Text",
+  "version": "0.1.0",
+  "homepage": "https://github.com/twolfson/sublime-js-var-shortcuts",
+  "author": {
+    "name": "Todd Wolfson",
+    "email": "todd@twolfson.com",
+    "url": "http://twolfson.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/twolfson/sublime-js-var-shortcuts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/twolfson/sublime-js-var-shortcuts/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/twolfson/sublime-js-var-shortcuts/blob/master/LICENSE-MIT"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-watch": "~0.4.0"
+  },
+  "keywords": [
+    "sublime text",
+    "var",
+    "variable",
+    "shortcut"
+  ],
+  "private": true
+}
