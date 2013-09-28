@@ -100,6 +100,4 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
             self.run_default()
 
     def run_default(self):
-        self.view.run_command("run_macro_file", {
-            "file": "Packages/Default/Delete to Hard BOL.sublime-macro"
-        })
+        self.view.run_command("delete_word", {"forward": False})
