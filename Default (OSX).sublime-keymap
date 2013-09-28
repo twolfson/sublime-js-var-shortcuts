@@ -1,6 +1,6 @@
 [
   {
-    "keys": ["super+k", "super+backspace"],
+    "keys": ["super+backspace"],
     "command": "js_var_delete"
   // },
   // {
