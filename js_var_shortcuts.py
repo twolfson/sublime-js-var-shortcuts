@@ -97,13 +97,25 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
 
             # For each group
             for group in var_groups:
-                # Iterate over the vars
+                # Create a region for each var
                 vars = group['vars']
                 for var in vars:
-                    var_region = Region(var['start'], var['end'])
-                    # Find if it matches any selections
-                    for sel in group['selections']:
-                        var['matched'] = var_region.intersects(sel)
+                    var['region'] = Region(var['start'], var['end'])
+
+                # Iterate over the selections
+                for sel in group['selections']:
+                    # Mark any vars that match
+                    matched_any = False
+                    for var in vars:
+                        if var['region'].intersects(sel):
+                            var['matched'] = True
+                            matched_any = True
+
+                    # If no vars matched, find the "closest" one(s) and mark them
+                    # va|r abc, def;
+                    # var abc[,] def;
+                    # var abc, def|;
+                    if not matched_any
 
                 # If the all vars are being deleted, delete the group
                 matches = map(lambda var: var['matched'], vars)
@@ -118,6 +130,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                     for var in vars:
                         # If the var has not been matched, mark leaving the head and continue
                         # var abc, ^def, ghi;
+                        print var['matched']
                         if not var['matched']:
                             in_head = False
                             continue
@@ -133,9 +146,11 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
 
                         # Otherwise, (we are in the tail), buffer on the left
                         # var abc, def[, ^ghi];
+                        print in_head
                         if not in_head:
                             var_end = var['end']
                             pattern = re.compile('\s+')
+                            print pattern.search(script, var_end)
                             buffered_end = pattern.search(script, var_end).start(0) + 1
                             view.erase(edit, Region(var['start'], buffered_end))
 

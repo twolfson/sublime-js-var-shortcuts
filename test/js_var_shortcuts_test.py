@@ -57,7 +57,7 @@ skip_tests = [
     'multiline-start',  # TODO: This is an arguable case... I will wait until the logic is done
 ]
 
-test_namespaces = ['multiline-first']
+test_namespaces = ['multiline-last']
 
 # For each of the namespaces
 for namespace in test_namespaces:
