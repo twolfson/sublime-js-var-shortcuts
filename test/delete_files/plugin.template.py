@@ -19,7 +19,7 @@ def run():
         scratch_view.set_sel(target_sel)
 
         # Run command
-        scratch_view.run_command('left_delete')
+        scratch_view.run_command('js_var_delete')
 
         # Injection point for assertion variables
         expected_content = """{{expected_content}}"""

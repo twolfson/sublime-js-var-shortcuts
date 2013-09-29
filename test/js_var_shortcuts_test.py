@@ -14,14 +14,14 @@ class TestVarDelete(framework.TestCase):
     @framework.template(__dir__ + '/delete_files/plugin.template.py')
     def parse_io_files(self, base_path):
         # Load in input
-        with open('%s.input.py' % base_path) as f:
+        with open('%s.input.js' % base_path) as f:
             input = f.read()
 
         # Break up target selection from content
         input_obj = split_selection(input)
 
         # Load in single.output
-        with open('%s.output.py' % base_path) as f:
+        with open('%s.output.js' % base_path) as f:
             expected_output = f.read()
 
         # Break up expected selection from content
@@ -35,12 +35,5 @@ class TestVarDelete(framework.TestCase):
             'expected_content': expected_obj['content'],
         }
 
-    def test_var_delete_single(self):
-        return self.parse_io_files(__dir__ + '/delete_files/single')
-
-    def test_var_delete_multi(self):
-        return self.parse_io_files(__dir__ + '/delete_files/multi')
-
-    def test_var_delete_multi_collapse(self):
-        return self.parse_io_files(__dir__ + '/delete_files/multi_collapse')
-
+    def test_var_delete_default(self):
+        return self.parse_io_files(__dir__ + '/delete_files/default')
