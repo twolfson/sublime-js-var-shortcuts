@@ -12,8 +12,8 @@ install:
   # List Sublime Text info for debugging
   - sublime_text --version
 
-  # Install `sublime_plugin_tests`
-  - python setup.py install
+  # Install dev dependencies
+  - pip install -r requirements-dev.txt
 
 before_script:
   # Generate a screen buffer to collect Sublime Text window
