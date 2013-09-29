@@ -1,29 +1,49 @@
-# Load in test framework
+# Load in core dependencies
+import os
+
+# Load in 3rd party dependencies
+from jinja2 import Template
+
+# Load in local dependencies
 from sublime_plugin_tests import framework
+from sublime_plugin_tests.utils.selection import split_selection
 
-# Define a TestCase
-class TestLeftDelete(framework.TestCase):
-    def test_left_delete_single(self):
-        # Each test function *must* return Python with a `run` function
-        # `run` will be run inside Sublime Text. Perform your assertions etc there.
-        return """
-# Use ScratchView utility provided by `sublime_plugin_tests`
-from utils.scratch_view import ScratchView
+# Set up constants
+__dir__ = os.path.dirname(os.path.abspath(__file__))
 
-def run():
-    # Generate new scratch file
-    scratch_view = ScratchView()
-    try:
-        # Update the content and selection `ab|c`
-        scratch_view.set_content('abc')
-        scratch_view.set_sel([(2, 2)])
 
-        # Delete one character to the left `a|c
-        scratch_view.run_command('left_delete')
+# Define our class
+class TestVarDelete(framework.TestCase):
+    @framework.template(__dir__ + '/delete_files/plugin.template.py')
+    def parse_io_files(self, base_path):
+        # Load in input
+        with open('%s.input.py' % base_path) as f:
+            input = f.read()
 
-        # Assert the current content
-        assert scratch_view.get_content() == 'ac'
-    finally:
-        # No matter what happens, close the view
-        scratch_view.destroy()
-"""
+        # Break up target selection from content
+        input_obj = split_selection(input)
+
+        # Load in single.output
+        with open('%s.output.py' % base_path) as f:
+            expected_output = f.read()
+
+        # Break up expected selection from content
+        expected_obj = split_selection(expected_output)
+
+        # Return collected information
+        return {
+            'target_sel': input_obj['selection'],
+            'content': input_obj['content'],
+            'expected_sel': expected_obj['selection'],
+            'expected_content': expected_obj['content'],
+        }
+
+    def test_var_delete_single(self):
+        return self.parse_io_files(__dir__ + '/delete_files/single')
+
+    def test_var_delete_multi(self):
+        return self.parse_io_files(__dir__ + '/delete_files/multi')
+
+    def test_var_delete_multi_collapse(self):
+        return self.parse_io_files(__dir__ + '/delete_files/multi_collapse')
+
