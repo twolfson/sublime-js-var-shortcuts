@@ -1,8 +1,11 @@
-import re
-
+# Load in core dependencies
+import subprocess
 import sublime
 import sublime_plugin
+import tempfile
 
+
+# Define a deletion command
 class JsVarDeleteCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         # If the view is not JavaScript, perform the default
@@ -10,10 +13,16 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
         if view.settings().get('syntax') != u'Packages/JavaScript/JavaScript.tmLanguage':
             return self.run_default()
 
-        # Grab the `var` and selected regions
-        # DEV: `var` regions are defined by a `var` and a `;`
-        var_regions = view.find_all(r'var[^;]+;')
-        selected_regions = view.sel()
+        # Save file contents to a temporary file
+        with tempfile.NamedTemporaryFile() as f:
+            content = view.substr(sublime.Region(0, view.size()))
+            f.write(content)
+            print subprocess.call(["node", "-x", """
+                console.log(1);
+            """])
+
+        return
+
 
         # Determine which `var` block each selection is in
         # DEV: If this fails, use esprima to detect var blocks and return locations
