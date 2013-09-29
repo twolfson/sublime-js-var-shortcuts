@@ -1,9 +1,6 @@
 # Load in core dependencies
 import os
 
-# Load in 3rd party dependencies
-from jinja2 import Template
-
 # Load in local dependencies
 from sublime_plugin_tests import framework
 from sublime_plugin_tests.utils.selection import split_selection
