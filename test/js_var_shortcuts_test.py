@@ -48,11 +48,12 @@ test_namespaces = map(lambda filename: (filename.replace(delete_dir + '/', '')
                                                 .replace('.input.js', '')), test_filenames)
 skip_tests = [
     'comma-in-var',  # Edge case not yet supported (move to esprima)
-    'multi-var-all',  # Wide selection not yet supported (implement in plugin_tests)
-    'multi-var-multiple',  # Wide selection not yet supported (implement in plugin_tests)
-    'same-line-multi-var',  # TODO: Deal with nuance of cursor relocation during edit
-    'multi-var-middle',  # TODO: Deal with nuance of cursor relocation during edit
-    'multi-end',  # TODO: Deal with nuance of cursor relocation during edit
+    'multiline-all',  # Wide selection not yet supported (implement in plugin_tests)
+    'multiline-multiple',  # Wide selection not yet supported (implement in plugin_tests)
+    'same-line',  # TODO: Deal with nuance of cursor relocation during edit
+    'multiline-middle',  # TODO: Deal with nuance of cursor relocation during edit
+    'multiline-end-of-var',  # TODO: Deal with nuance of cursor relocation during edit
+    'multi-var',  # TODO: Interesting edge case for sets...
 ]
 
 # For each of the namespaces
