@@ -1,3 +1,3 @@
 var abc;
 
-|(abc);
+console.|(abc);
