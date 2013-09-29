@@ -17,16 +17,16 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
         with tempfile.NamedTemporaryFile() as f:
             content = view.substr(sublime.Region(0, view.size()))
             f.write(content)
-            print subprocess.__dict__
-            print subprocess.check_output(["node", "-x", """
+            child = subprocess.Popen(["node", "--eval", """
                 var fs = require('fs'),
-                    varFind = require('var-find');
-                console.log(
-                    JSON.stringify(
-                        fs.readFileSync(process.argv[1],'utf8')
-                    )
-                );
-            """, f.name])
+                    varFind = require('var-find'),
+                    filepath = process.argv[1],
+                    script = fs.readFileSync(filepath, 'utf8'),
+                    c = console.log(filepath),
+                    varGroups = varFind(script);
+                console.log(JSON.stringify(varGroups));
+            """, f.name], stdout=subprocess.PIPE)
+            print child.stdout.read()
 
         return
 
