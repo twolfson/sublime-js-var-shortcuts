@@ -15,6 +15,9 @@ install:
   # Install dev dependencies
   - pip install -r requirements-dev.txt
 
+  # Install our plugin
+  - ./symlink.sh
+
 before_script:
   # Generate a screen buffer to collect Sublime Text window
   - export DISPLAY=:99.0
