@@ -139,6 +139,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                             # var abc [, def, ] ghi, jkl;
                             # var jkl;
                             if prev_var['start'] < sel.start() and prev_var['end'] > sel.end():
+                                # TODO: Build + re-use re.findright (uses finditer and returns last one -- also takes endpos =D)
                                 # If our right is left of the comma, mark the previous var
                                 # var abc | , def;
 
