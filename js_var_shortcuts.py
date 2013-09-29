@@ -7,6 +7,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         # If the view is not JavaScript, perform the default
         view = self.view
+        print view.settings().get('syntax')
         if view.settings().get('syntax') != u'Packages/JavaScript/JavaScript.tmLanguage':
             return self.run_default()
 

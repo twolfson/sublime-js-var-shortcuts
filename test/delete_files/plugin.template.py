@@ -19,6 +19,7 @@ def run():
         scratch_view.set_sel(target_sel)
 
         # Run command
+        scratch_view.view.settings().set('syntax', u'Packages/JavaScript/JavaScript.tmLanguage')
         scratch_view.run_command('js_var_delete')
 
         # Injection point for assertion variables
