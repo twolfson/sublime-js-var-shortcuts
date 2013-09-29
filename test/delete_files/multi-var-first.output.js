@@ -1,4 +1,4 @@
-var d|ef,
+var |def,
     ghi;
 
 console.log(abc);

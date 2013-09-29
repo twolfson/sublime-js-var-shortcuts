@@ -1,3 +1,3 @@
-var abc, g|hi;
+var abc,| ghi;
 
 console.log(abc);
