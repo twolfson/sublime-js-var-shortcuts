@@ -121,12 +121,12 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                         for i, var in enumerate(vars):
                             # If we are before the first variable, mark the first variable
                             # va|r abc, def;
-                            if i == 0 and var['start'] < sel.begin():
+                            if i == 0 and sel.begin() < var['start']:
                                 var['matched'] = True
                                 break
 
                             # If we are after the last variable,
-                            if i == (len(vars) - 1) and var['end'] > sel.end():
+                            if i == (len(vars) - 1) and sel.end() > var['end']:
                                 var['matched'] = True
                                 break
 
