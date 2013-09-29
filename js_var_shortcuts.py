@@ -1,4 +1,5 @@
 # Load in core dependencies
+import json
 import subprocess
 import sublime
 import sublime_plugin
@@ -13,31 +14,30 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
         if view.settings().get('syntax') != u'Packages/JavaScript/JavaScript.tmLanguage':
             return self.run_default()
 
-        # Get the var locations via esprima (JS AST parser)
+        # Write to a temporary fie
         (i, filepath) = tempfile.mkstemp()
-        with open(filepath, 'w') as f:
-            # Write to a temporary fie
-            content = view.substr(sublime.Region(0, view.size()))
-            f.write(content)
+        f = open(filepath, 'w')
+        content = view.substr(sublime.Region(0, view.size()))
+        f.write(content)
+        f.close()
 
-            # import time; time.sleep(1)
+        # Get the var locations via esprima (JS AST parser)
+        child = subprocess.Popen(["node", "--eval", """
+            var fs = require('fs'),
+                varFind = require('var-find'),
+                filepath = process.argv[1],
+                script = fs.readFileSync(filepath, 'utf8'),
+                varGroups = varFind(script);
+            console.log(JSON.stringify(varGroups));
+        """, filepath], stdout=subprocess.PIPE)
+        var_group_json = child.stdout.read()
 
-            # Extract variable group locations
-            child = subprocess.Popen(["node", "--eval", """
-                var fs = require('fs'),
-                    varFind = require('var-find'),
-                    filepath = process.argv[1],
-                    script = fs.readFileSync(filepath, 'utf8'),
-                    c = console.log(filepath),
-                    c = console.log('waa', script),
-                    varGroups = varFind(script);
-                console.log(JSON.stringify(varGroups));
-            """, filepath], stdout=subprocess.PIPE)
-            print child.stdout.read()
+        # Kill the child
+        child.kill()
 
-            # Kill the child
-            child.kill()
-
+        # Interpret the variable groups
+        var_groups = json.loads(var_group_json)
+        print var_groups
         return
 
 
