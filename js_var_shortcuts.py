@@ -101,6 +101,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                 vars = group['vars']
                 for var in vars:
                     var['region'] = Region(var['start'], var['end'])
+                    var['matched'] = False
 
                 # Iterate over the selections
                 for sel in group['selections']:
@@ -115,7 +116,21 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                     # va|r abc, def;
                     # var abc[,] def;
                     # var abc, def|;
-                    if not matched_any
+                    if not matched_any:
+                        # TODO: If they aren't ordered, order the vars by region start
+                        for i, var in enumerate(vars):
+                            # If we are before the first variable, mark the first variable
+                            # va|r abc, def;
+                            if i == 0 and var['start'] < sel.begin():
+                                var['matched'] = True
+                                break
+
+                            # If we are after the last variable,
+                            if i == (len(vars) - 1) and var['end'] > sel.end():
+                                var['matched'] = True
+                                break
+
+                            # TODO: Multiple case
 
                 # If the all vars are being deleted, delete the group
                 matches = map(lambda var: var['matched'], vars)
