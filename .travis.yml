@@ -16,6 +16,7 @@ install:
   - pip install -r requirements-dev.txt
 
   # Install our plugin
+  - mkdir -p ~/.config/sublime-text-2/Packages/
   - ./symlink.sh
 
 before_script:
