@@ -138,16 +138,17 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                     view.erase(edit, group['region'])
                 else:
                 # Otherwise...
-                    # TODO: Sort the vars in and iterate in reverse order to not fuck up indexes
+                    # TODO: Sort the vars in and iterate in reverse order to not fuck up indexes -- this will affect prev_var
                     # Buffer out selections to contain surrounding whitespace
                     # var [ab|c,] def[, g|hi];
                     in_head = True
                     for var in vars:
                         # If the var has not been matched, mark leaving the head and continue
                         # var abc, ^def, ghi;
-                        print var['matched']
+                        print 'www', var['matched']
                         if not var['matched']:
                             in_head = False
+                            prev_var = var
                             continue
 
                         # If we are in the head group, buffer on the right
@@ -161,13 +162,15 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
 
                         # Otherwise, (we are in the tail), buffer on the left
                         # var abc, def[, ^ghi];
-                        print in_head
+                        print 'x', in_head
                         if not in_head:
-                            var_end = var['end']
+                            print 'aaa', prev_var
+                            prev_var_start = prev_var['start']
                             pattern = re.compile('\s+')
-                            print pattern.search(script, var_end)
-                            buffered_end = pattern.search(script, var_end).start(0) + 1
-                            view.erase(edit, Region(var['start'], buffered_end))
+                            buffered_start = pattern.search(script, prev_var_start).end(0) + 1
+                            view.erase(edit, Region(buffered_start, var['end']))
+
+                        prev_var = var
 
 
 
