@@ -13,20 +13,30 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
         if view.settings().get('syntax') != u'Packages/JavaScript/JavaScript.tmLanguage':
             return self.run_default()
 
-        # Save file contents to a temporary file
-        with tempfile.NamedTemporaryFile() as f:
+        # Get the var locations via esprima (JS AST parser)
+        (i, filepath) = tempfile.mkstemp()
+        with open(filepath, 'w') as f:
+            # Write to a temporary fie
             content = view.substr(sublime.Region(0, view.size()))
             f.write(content)
+
+            # import time; time.sleep(1)
+
+            # Extract variable group locations
             child = subprocess.Popen(["node", "--eval", """
                 var fs = require('fs'),
                     varFind = require('var-find'),
                     filepath = process.argv[1],
                     script = fs.readFileSync(filepath, 'utf8'),
                     c = console.log(filepath),
+                    c = console.log('waa', script),
                     varGroups = varFind(script);
                 console.log(JSON.stringify(varGroups));
-            """, f.name], stdout=subprocess.PIPE)
+            """, filepath], stdout=subprocess.PIPE)
             print child.stdout.read()
+
+            # Kill the child
+            child.kill()
 
         return
 
