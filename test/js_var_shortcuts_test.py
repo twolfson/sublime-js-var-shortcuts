@@ -8,10 +8,11 @@ from sublime_plugin_tests.utils.selection import split_selection
 
 # Set up constants
 __dir__ = os.path.dirname(os.path.abspath(__file__))
+delete_dir = __dir__ + '/delete_files'
 
 # Define our class
 class TestVarDelete(framework.TestCase):
-    @framework.template(__dir__ + '/delete_files/plugin.template.py')
+    @framework.template(delete_dir + '/plugin.template.py')
     def parse_io_files(self, base_path):
         # Load in input
         with open('%s.input.js' % base_path) as f:
@@ -37,12 +38,14 @@ class TestVarDelete(framework.TestCase):
 
     @classmethod
     def _add_io_test_case(cls, namespace):
-        print namespace
-        pass
+        def test_var_delete_fn(self):
+            return self.parse_io_files(delete_dir + '/' + namespace)
+        setattr(cls, 'test_var_delete_' + namespace, test_var_delete_fn)
 
 # Grab files to load in as tests
-test_filenames = glob.glob(__dir__ + '/delete_files/*.input.js')
-test_namespaces = map(lambda filename: filename.replace('.input.js', ''), test_filenames)
+test_filenames = glob.glob(delete_dir + '/*.input.js')
+test_namespaces = map(lambda filename: (filename.replace(delete_dir + '/', '')
+                                                .replace('.input.js', '')), test_filenames)
 skip_tests = [
     'comma-in-var',  # Edge case not yet supported (move to esprima)
     'multi-var-all',  # Wide selection not yet supported (implement in plugin_tests)
