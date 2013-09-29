@@ -6,6 +6,24 @@ import sublime_plugin
 import tempfile
 
 
+# Define a custom RegionSet (cannot use sublime's =_=)
+class RegionSet():
+    def __init__(self):
+        self.regions = set()
+
+    def add(self, region):
+        self.regions.add(region)
+
+    def contains(self, needle):
+        contains = False
+
+        for haystack in self.regions:
+            if haystack.contains(needle):
+                contains = True
+
+        return contains
+
+
 # Define a deletion command
 class JsVarDeleteCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -39,13 +57,12 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
         var_groups = json.loads(var_group_json)
 
         # Collect all of the variable regions
-        var_regions = sublime.RegionSet()
+        var_regions = RegionSet()
         for group in var_groups:
-            var_regions.append(sublime.Region(group['start'], group['end']))
+            var_regions.add(sublime.Region(group['start'], group['end']))
 
         # If none of the selections are not in a variable region, perform the default behavior
         in_var_region = map(lambda sel_region: var_regions.contains(sel_region), view.sel())
-        print in_var_region
         if not any(in_var_region):
             self.run_default()
         # Otherwise, if all of the selections are in a variable region
