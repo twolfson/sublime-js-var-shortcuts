@@ -123,14 +123,22 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                             # va|r abc, def;
                             if i == 0 and sel.begin() < var['start']:
                                 var['matched'] = True
+                                prev_var = var
                                 break
 
                             # If we are after the last variable,  mark the last variable
                             if i == (len(vars) - 1) and sel.end() > var['end']:
                                 var['matched'] = True
+                                prev_var = var
                                 break
 
                             # If we are between two vars
+                            # TODO: This won't work for when multiple parts of a var were selected
+                            # var abc [, def], ghi;
+                            # TODO: We could `subtract` a var from sel each time it is used. Need to fragment if it is a wide straddle
+                            # var abc [, def, ] ghi, jkl;
+                            # var jkl;
+                            if prev_var['start'] < sel.start() and prev_var['end'] > sel.end():
                                 # If our right is left of the comma, mark the previous var
                                 # var abc | , def;
 
