@@ -1,5 +1,6 @@
 # Load in core dependencies
 import os
+import unittest
 
 # Load in local dependencies
 from sublime_plugin_tests import framework
@@ -37,3 +38,11 @@ class TestVarDelete(framework.TestCase):
 
     def test_var_delete_default(self):
         return self.parse_io_files(__dir__ + '/delete_files/default')
+
+    @unittest.skip('Currently not supported')
+    def test_var_delete_comma_in_var(self):
+        return self.parse_io_files(__dir__ + '/delete_files/comma-in-var')
+
+    @unittest.skip('Currently not supported')
+    def test_var_delete_comma_in_var(self):
+        return self.parse_io_files(__dir__ + '/delete_files/comma-in-var')
