@@ -1,4 +1,4 @@
-# sublime-js-var-shortcuts
+# sublime-js-var-shortcuts [![Build status](https://travis-ci.org/twolfson/sublime-js-var-shortcuts.png?branch=master)](https://travis-ci.org/twolfson/sublime-js-var-shortcuts)
 
 JS var shortcuts for Sublime Text
 
