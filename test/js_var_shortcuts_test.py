@@ -1,6 +1,5 @@
 # Load in core dependencies
 import os
-import unittest
 
 # Load in local dependencies
 from sublime_plugin_tests import framework
@@ -8,7 +7,6 @@ from sublime_plugin_tests.utils.selection import split_selection
 
 # Set up constants
 __dir__ = os.path.dirname(os.path.abspath(__file__))
-
 
 # Define our class
 class TestVarDelete(framework.TestCase):
@@ -36,13 +34,19 @@ class TestVarDelete(framework.TestCase):
             'expected_content': expected_obj['content'],
         }
 
-    def test_var_delete_default(self):
-        return self.parse_io_files(__dir__ + '/delete_files/default')
+    # Automatically load in tests from flat files
+    test_filenames = os.listdir(__dir__ + '/delete_files')
+    skip_tests = [
+        'comma-in-var',  # Edge case not yet supported (move to esprima)
+        'multi-var-all',  # Wide selection not yet supported (implement in plugin_tests)
+        'multi-var-multiple',  # Wide selection not yet supported (implement in plugin_tests)
+    ]
 
-    @unittest.skip('Currently not supported')
-    def test_var_delete_comma_in_var(self):
-        return self.parse_io_files(__dir__ + '/delete_files/comma-in-var')
+    for filename in test_filenames:
+        # If the test is marked for skipping, skip it
+        if filename in skip_tests:
+            continue
 
-    @unittest.skip('Currently not supported')
-    def test_var_delete_comma_in_var(self):
-        return self.parse_io_files(__dir__ + '/delete_files/comma-in-var')
+        # Otherwise, define the test
+        def test_abc(self):
+            return ''
