@@ -1,3 +1,3 @@
-var abc,| ghi;
+var |def;
 
 console.log(abc);

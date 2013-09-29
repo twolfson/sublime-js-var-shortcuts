@@ -1,4 +1,4 @@
-# sublime-js-var-shortcuts
+# sublime-js-var-shortcuts [![Build status](https://travis-ci.org/twolfson/sublime-js-var-shortcuts.png?branch=master)](https://travis-ci.org/twolfson/sublime-js-var-shortcuts)
 
 JS var shortcuts for Sublime Text
 
@@ -25,7 +25,7 @@ Support this project and [others by twolfson][gittip] via [gittip][].
 [gittip]: https://www.gittip.com/twolfson/
 
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style.
+In lieu of a formal styleguide, take care to maintain the existing coding style. Test via `nosetests`.
 
 ## License
 Copyright (c) 2013 Todd Wolfson

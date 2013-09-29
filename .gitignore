@@ -1,2 +1,2 @@
-js_var_shortcuts.pyc
+*.pyc
 node_modules/grunt*
