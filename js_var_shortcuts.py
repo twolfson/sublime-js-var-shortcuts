@@ -86,23 +86,47 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                     if group['region'].contains(sel):
                         group['selections'].append(sel)
 
+            # TODO: What about when we delete a comma
+
+            # TODO: Sort the groups by region and iterate in reverse order to not fuck up indexes
+
             # For each group
             for group in var_groups:
                 # Iterate over the vars
-                for var in group['vars']:
+                vars = group['vars']
+                for var in vars:
+                    var_region = sublime.Region(var['start'], var['end'])
                     # Find if it matches any selections
                     for sel in group['selections']:
-                        if var.intersects(sel):
-                            var['matched'] = True
+                        var['matched'] = var_region.intersects(sel)
 
                 # If the all vars are being deleted, delete the group
-                matches = map(lambda var: var['matched'], group['vars'])
+                matches = map(lambda var: var['matched'], vars)
                 if all(matches):
                     view.erase(edit, group['region'])
+                else:
+                # Otherwise...
+                    # TODO: Sort the vars in and iterate in reverse order to not fuck up indexes
+                    # Buffer out selections to contain surrounding whitespace
+                    # var [ab|c,] def[, g|hi];
+                    in_head = True
+                    for var in vars:
+                        # If the var has not been matched, mark leaving the head and continue
+                        # var abc, ^def, ghi;
+                        if not var['matched']:
+                            in_head = False
+                            continue
+
+                        # If we are in the head group, buffer on the right
+                        # var [^abc,] def, ghi;
+                        if in_head:
+                            var_end = var['end']
+                            print var_end
+
+                        # Otherwise, (we are in the tail), buffer on the left
+                        # var abc, def[, ^ghi];
 
 
-            # # Delete the selected variable from each block
-            # if collective_regions:
 
     def run_default(self):
         self.view.run_command("delete_word", {"forward": False})
