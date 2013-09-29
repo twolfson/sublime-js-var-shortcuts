@@ -1,5 +1,6 @@
 # Load in core dependencies
 import os
+import glob
 
 # Load in local dependencies
 from sublime_plugin_tests import framework
@@ -34,19 +35,25 @@ class TestVarDelete(framework.TestCase):
             'expected_content': expected_obj['content'],
         }
 
-    # Automatically load in tests from flat files
-    test_filenames = os.listdir(__dir__ + '/delete_files')
-    skip_tests = [
-        'comma-in-var',  # Edge case not yet supported (move to esprima)
-        'multi-var-all',  # Wide selection not yet supported (implement in plugin_tests)
-        'multi-var-multiple',  # Wide selection not yet supported (implement in plugin_tests)
-    ]
+    @classmethod
+    def _add_io_test_case(cls, namespace):
+        print namespace
+        pass
 
-    for filename in test_filenames:
-        # If the test is marked for skipping, skip it
-        if filename in skip_tests:
-            continue
+# Grab files to load in as tests
+test_filenames = glob.glob(__dir__ + '/delete_files/*.input.js')
+test_namespaces = map(lambda filename: filename.replace('.input.js', ''), test_filenames)
+skip_tests = [
+    'comma-in-var',  # Edge case not yet supported (move to esprima)
+    'multi-var-all',  # Wide selection not yet supported (implement in plugin_tests)
+    'multi-var-multiple',  # Wide selection not yet supported (implement in plugin_tests)
+]
 
-        # Otherwise, define the test
-        def test_abc(self):
-            return ''
+# For each of the namespaces
+for namespace in test_namespaces:
+    # If the test is marked for skipping, skip it
+    if namespace in skip_tests:
+        continue
+
+    # Otherwise, define the test
+    TestVarDelete._add_io_test_case(namespace)
