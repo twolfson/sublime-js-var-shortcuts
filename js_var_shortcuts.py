@@ -1,9 +1,14 @@
 # Load in core dependencies
 import json
+import re
 import subprocess
 import sublime
 import sublime_plugin
 import tempfile
+
+
+# Localize Region
+Region = sublime.Region
 
 
 # Define a custom RegionSet (cannot use sublime's =_=)
@@ -35,8 +40,8 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
         # Write to a temporary fie
         (i, filepath) = tempfile.mkstemp()
         f = open(filepath, 'w')
-        content = view.substr(sublime.Region(0, view.size()))
-        f.write(content)
+        script = view.substr(Region(0, view.size()))
+        f.write(script)
         f.close()
 
         # Get the var locations via esprima (JS AST parser)
@@ -63,7 +68,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
         var_regions = RegionSet()
         for group in var_groups:
             # Generate and save a region to our RegionSet
-            region = sublime.Region(group['start'], group['end'])
+            region = Region(group['start'], group['end'])
             var_regions.add(region)
 
             # Save the region to the group for later
@@ -95,7 +100,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                 # Iterate over the vars
                 vars = group['vars']
                 for var in vars:
-                    var_region = sublime.Region(var['start'], var['end'])
+                    var_region = Region(var['start'], var['end'])
                     # Find if it matches any selections
                     for sel in group['selections']:
                         var['matched'] = var_region.intersects(sel)
@@ -118,13 +123,21 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                             continue
 
                         # If we are in the head group, buffer on the right
-                        # var [^abc,] def, ghi;
+                        # var [^abc, ]def, ghi;
                         if in_head:
                             var_end = var['end']
-                            print var_end
+                            pattern = re.compile('\s+')
+                            buffered_end = pattern.search(script, var_end).end(0)
+                            print var['start'], buffered_end
+                            view.erase(edit, Region(var['start'], buffered_end))
 
                         # Otherwise, (we are in the tail), buffer on the left
                         # var abc, def[, ^ghi];
+                        if not in_head:
+                            var_end = var['end']
+                            pattern = re.compile('\s+')
+                            buffered_end = pattern.search(script, var_end).start(0) + 1
+                            view.erase(edit, Region(var['start'], buffered_end))
 
 
 
