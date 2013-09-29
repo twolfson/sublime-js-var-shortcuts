@@ -125,12 +125,20 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                                 var['matched'] = True
                                 break
 
-                            # If we are after the last variable,
+                            # If we are after the last variable,  mark the last variable
                             if i == (len(vars) - 1) and sel.end() > var['end']:
                                 var['matched'] = True
                                 break
 
-                            # TODO: Multiple case
+                            # If we are between two vars
+                                # If our right is left of the comma, mark the previous var
+                                # var abc | , def;
+
+                                # If our left is right of the comma, mark the next var
+                                # var abc , | def;
+
+                                # Otherwise, mark the surrounding vars
+                                # var abc [,] def;
 
                 # If the all vars are being deleted, delete the group
                 matches = map(lambda var: var['matched'], vars)
