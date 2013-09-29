@@ -37,93 +37,29 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
 
         # Interpret the variable groups
         var_groups = json.loads(var_group_json)
-        print var_groups
-        return
 
+        # Collect all of the variable regions
+        var_regions = sublime.RegionSet()
+        for group in var_groups:
+            var_regions.append(sublime.Region(group['start'], group['end']))
 
-        # Determine which `var` block each selection is in
-        # DEV: If this fails, use esprima to detect var blocks and return locations
-        def find_var_region(selected_region):
-            # By default, no region is found
-            var_region = None
-
-            # For each `var` region
-            for region in var_regions:
-                # If the region contains our selected region, save it and break
-                if region.contains(selected_region):
-                    var_region = region
-                    break
-
-            # Return the found region
-            return var_region
-        selected_var_regions = map(find_var_region, selected_regions)
-
-        # If all selections are in a `var` block
-        if all(selected_var_regions):
-            # Map the selections for a variable
-            # DEV: Variable is defined by a `var|,` and a `,|;`
-            # TODO: This is the esprima part since the variable could have a `,` or `;` in its definition
-            variable_regions = []
-            for i, var_region in enumerate(selected_var_regions):
-                # Grab the selection region and variable content
-                # TODO: I am being naive here since edge cases deserve a testing framework
-                selected_region = selected_regions[i]
-                var_content = view.substr(var_region)
-
-                # Find the region containing our selection
-                var_region_start = var_region.begin()
-                variable_region = None
-
-                # Find all of the variable chunk in our `var` block
-                for match in re.finditer(r'var([^,;]+,\s*)', var_content):
-                    # Generate a region for the variable
-                    matched_region = sublime.Region(var_region_start + match.start(),
-                                                    var_region_start + match.end())
-
-                    # If the matched region *contains* the selected region (meaning full encapsulation)
-                    # TODO: For multiple variables selected, we will prob be on esprima
-                    # TODO: and it should be an intersection which collects onto an array of regions
-                    if matched_region.contains(selected_region):
-                        # Remove `var ` from deletion
-                        matched_region = sublime.Region(matched_region.begin() + 4,
-                                                        matched_region.end())
-
-                        # Save the region
-                        variable_region = matched_region
-                        break
-
-                for match in re.finditer(r'var([^,;]+;)', var_content):
-                    matched_region = sublime.Region(var_region_start + match.start(),
-                                                    var_region_start + match.end())
-                    if matched_region.contains(selected_region):
-                        variable_region = matched_region
-                        break
-
-                for match in re.finditer(r',([^,;]+)', var_content):
-                    matched_region = sublime.Region(var_region_start + match.start(),
-                                                    var_region_start + match.end())
-                    if matched_region.contains(selected_region):
-                        variable_region = matched_region
-                        break
-
-                # If there was a region, save it
-                # DEV: This check is intended for the multiple selected variables case
-                if variable_region:
-                    variable_regions.append(variable_region)
-
-            # Combine all regions
-            collective_regions = variable_regions.pop() if variable_regions else None
-            for variable_region in variable_regions:
-                collective_regions = collective_regions.cover(variable_region)
-
-            # Delete the selected variable from each block
-            if collective_regions:
-                view.erase(edit, collective_regions)
-
-        # Otherwise, if all selections are not in a `var` block
-        elif not any(selected_var_regions):
-            # Run the default command
+        # If none of the selections are not in a variable region, perform the default behavior
+        in_var_region = map(lambda sel_region: var_regions.contains(sel_region), view.sel())
+        print in_var_region
+        if not any(in_var_region):
             self.run_default()
+        # Otherwise, if all of the selections are in a variable region
+        elif all(in_var_region):
+            print 'go time'
+
+            # # Combine all regions
+            # collective_regions = variable_regions.pop() if variable_regions else None
+            # for variable_region in variable_regions:
+            #     collective_regions = collective_regions.cover(variable_region)
+
+            # # Delete the selected variable from each block
+            # if collective_regions:
+            #     view.erase(edit, collective_regions)
 
     def run_default(self):
         self.view.run_command("delete_word", {"forward": False})
