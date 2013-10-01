@@ -195,7 +195,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                                 break
 
                 # If every var was matched, delete the group
-                every_var_matched = all(map(lambda var: var['matched'], vars))
+                every_var_matched = all(map(lambda var: var.get('matched', False), vars))
                 if every_var_matched:
                     delete_regions.append(group['region'])
                 # Otherwise
@@ -204,7 +204,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                     break_encountered = False
                     for var in vars:
                         # If we are in a break, mark it
-                        if not var['matched']:
+                        if not var.get('matched', False):
                             break_encountered = True
                             continue
 
