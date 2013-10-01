@@ -143,6 +143,10 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                 vars.sort(lambda a, b: a['start'] - b['start'])
                 linked_listify(vars)
 
+                # Grab the first and last var
+                first_var = vars[0]
+                last_var = vars[len(vars) - 1]
+
                 # Break down the selection into an ordered list of indicies
                 selected_indicies = []
                 for sel in group['selections']:
@@ -150,6 +154,8 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                 selected_indicies.sort()
 
                 # Iterate over the indicies
+                for index in selected_indicies:
+
 
     def run_default(self):
         self.view.run_command("delete_word", {"forward": False})
