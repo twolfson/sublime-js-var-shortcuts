@@ -83,8 +83,9 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
         # Kill the child
         child.kill()
 
-        # If there is stderr, throw it
+        # If there is stderr, perform default action and throw stderr
         if var_group_stderr:
+            self.run_default()
             raise Exception(var_group_stderr)
 
         # Interpret the variable groups
