@@ -217,13 +217,9 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                             delete_regions.append(Region(var['start'], buffered_end))
 
                         # Otherwise, (we are after the break), buffer on the left
-                        # var abc, def[, ^ghi];
+                        # var abc, def[   , ^ghi];
                         else:
-                            # TODO: We should be finding right rather than this?
-                            prev_var_start = var['prev']['start']
-                            pattern = re.compile('\s+')
-                            buffered_start = pattern.search(script, prev_var_start).end(0) + 1
-                            delete_regions.append(Region(buffered_start, var['end']))
+                            delete_regions.append(Region(var['prev']['end'], var['end']))
 
             # Reverse sort the deleted groups
             delete_regions.sort(lambda a, b: b.begin() - a.begin())
