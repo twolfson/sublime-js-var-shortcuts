@@ -1,6 +1,6 @@
 # Load in core dependencies
 import json
-import re
+import os
 import subprocess
 import sublime
 import sublime_plugin
@@ -9,6 +9,10 @@ import tempfile
 
 # Localize Region
 Region = sublime.Region
+
+
+# Set up constants
+__dir__ = os.path.dirname(os.path.abspath(__file__))
 
 
 # Define a custom RegionSet (cannot use sublime's =_=)
@@ -52,11 +56,16 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                 script = fs.readFileSync(filepath, 'utf8'),
                 varGroups = varFind(script);
             console.log(JSON.stringify(varGroups));
-        """, filepath], stdout=subprocess.PIPE)
+        """, filepath], cwd=__dir__, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         var_group_json = child.stdout.read()
+        var_group_stderr = child.stderr.read()
 
         # Kill the child
         child.kill()
+
+        # If there is stderr, throw it
+        if var_group_stderr:
+            raise Exception(var_group_stderr)
 
         # Interpret the variable groups
         var_groups = json.loads(var_group_json)
