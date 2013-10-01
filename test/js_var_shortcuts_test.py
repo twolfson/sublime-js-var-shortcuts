@@ -48,13 +48,15 @@ test_namespaces = map(lambda filename: (filename.replace(delete_dir + '/', '')
 skip_tests = [
     'multiline-all',  # Wide selection not yet supported (implement in plugin_tests)
     'multiline-multiple',  # Wide selection not yet supported (implement in plugin_tests)
+    'multiline-end-of-var-wide',  # Wide selection not yet supported (implement in plugin_tests)
+    'multi-var-wide',  # Wide selection not yet supported (implement in plugin_tests)
     'same-line',  # TODO: Deal with nuance of cursor relocation during edit
     'multiline-middle',  # TODO: Deal with nuance of cursor relocation during edit
     'multiline-end-of-var',  # TODO: Deal with nuance of cursor relocation during edit
     'multiline-start',  # TODO: This is an arguable case... I will wait until the logic is done
 ]
 
-test_namespaces = ['multiline-last']
+# test_namespaces = ['multiline-last']
 
 # For each of the namespaces
 for namespace in test_namespaces:

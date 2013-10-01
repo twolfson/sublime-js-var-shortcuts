@@ -209,7 +209,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                             continue
 
                         # If we are before the break, buffer on the right
-                        # var [^abc, ]def, ghi;
+                        # var [^abc , ]def , ghi;
                         if not break_encountered:
                             var_end = var['end']
                             pattern = re.compile('\s+')
@@ -217,7 +217,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                             delete_regions.append(Region(var['start'], buffered_end))
 
                         # Otherwise, (we are after the break), buffer on the left
-                        # var abc, def[   , ^ghi];
+                        # var abc , def[ , ^ghi];
                         else:
                             delete_regions.append(Region(var['prev']['end'], var['end']))
 
