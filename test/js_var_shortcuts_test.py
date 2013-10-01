@@ -58,8 +58,7 @@ skip_tests = [
     'multiline-start',  # TODO: This is an arguable case... I will wait until the logic is done
 ]
 
-# test_namespaces = ['multiline-last']
-test_namespaces = ['multi-var']
+test_namespaces = ['single-var-start']
 
 # For each of the namespaces
 for namespace in test_namespaces:
