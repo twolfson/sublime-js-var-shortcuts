@@ -8,6 +8,8 @@ This was built for (1) quickly setting up and tearing down variables, (2) proof 
 
 [sublime-plugin-tests]: https://github.com/twolfson/sublime-plugin-tests/
 
+![Deletion screencast](docs/screencast.gif)
+
 ## Getting Started
 Install the module with: `npm install sublime-js-var-shortcuts`
 
