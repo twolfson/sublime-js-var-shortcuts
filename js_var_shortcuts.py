@@ -55,16 +55,12 @@ def linked_listify(items):
 
 # Define a deletion command
 class JsVarDeleteCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        # If the view is not JavaScript, perform the default
-        view = self.view
-        if view.settings().get('syntax') != u'Packages/JavaScript/JavaScript.tmLanguage':
-            return self.run_default()
-
+    @classmethod
+    def get_var_groups(cls, script):
+        """Get variable group and definition locations via JS AST"""
         # Write to a temporary fie
         (i, filepath) = tempfile.mkstemp()
         f = open(filepath, 'w')
-        script = view.substr(Region(0, view.size()))
         f.write(script)
         f.close()
 
@@ -85,14 +81,28 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
 
         # If there is stderr, perform default action and throw stderr
         if var_group_stderr:
-            self.run_default()
             raise Exception(var_group_stderr)
 
         # Interpret the variable groups
         var_groups = json.loads(var_group_json)
 
-        # TODO: If any var_groups are adjacent via whitespace, join them (handles multi-var-wide case)
-        # TODO: The technicality being... how we delete things multiple `var`s
+        # Return var_groups
+        return var_groups
+
+    def run(self, edit):
+        # If the view is not JavaScript, perform the default
+        view = self.view
+        if view.settings().get('syntax') != u'Packages/JavaScript/JavaScript.tmLanguage':
+            return self.run_default()
+
+        # Get the var_groups for the script
+        script = view.substr(Region(0, view.size()))
+        try:
+            var_groups = self.get_var_groups(script)
+        # When an error occurs, run the default action and raise it
+        except Exception as e:
+            self.run_default()
+            raise e
 
         # Collect all of the variable regions
         var_regions = RegionSet()
