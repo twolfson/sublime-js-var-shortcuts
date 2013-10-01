@@ -4,7 +4,7 @@ var abc,
 
 console.log(abc);
 ---
-var abc,|
+var abc|,
     ghi;
 
 console.log(abc);
