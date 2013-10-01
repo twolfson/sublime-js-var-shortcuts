@@ -33,6 +33,25 @@ class RegionSet():
         return contains
 
 
+# Define a helper for adding linked list refs
+def linked_listify(items):
+    # Bind head to tail
+    prev_item = None
+    for item in items:
+        item['prev'] = prev_item
+        prev_item = item
+
+    # Get tail item and bind in reverse
+    last_item = item
+    while last_item:
+        item = last_item['prev']
+        if item:
+            item['next'] = last_item
+            last_item = item
+        else:
+            last_item = None
+
+
 # Define a deletion command
 class JsVarDeleteCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -115,27 +134,22 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
             var_groups.sort(lambda a, b: a['start'] - b['start'])
 
             # Add ['prev'] and ['next'] properties for each group
-            prev_group = None
+            linked_listify(var_groups)
+
+            # Iterate over the groups
             for group in var_groups:
-                group['prev'] = prev_group
-                prev_group = group
+                # Sort and link the variables
+                vars = group['vars']
+                vars.sort(lambda a, b: a['start'] - b['start'])
+                linked_listify(vars)
 
-            last_group = group
-            while last_group:
-                group = last_group['prev']
-                if group:
-                    group['next'] = last_group
-                    last_group = group
-                else:
-                    last_group = None
+                # Break down the selection into an ordered list of indicies
+                selected_indicies = []
+                for sel in group['selections']:
+                    selected_indicies += range(sel.begin(), sel.end() + 1)
+                selected_indicies.sort()
 
-            print var_groups[0]
-
-            # Iterate over
-            # TODO: Add ['prev'] and ['next'] properties for each group
-
-
-
+                # Iterate over the indicies
 
     def run_default(self):
         self.view.run_command("delete_word", {"forward": False})
