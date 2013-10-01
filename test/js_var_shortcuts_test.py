@@ -1,6 +1,7 @@
 # Load in core dependencies
-import os
 import glob
+import os
+import re
 
 # Load in local dependencies
 from sublime_plugin_tests import framework
@@ -14,19 +15,16 @@ delete_dir = __dir__ + '/delete_files'
 class TestVarDelete(framework.TestCase):
     @framework.template(delete_dir + '/plugin.template.py')
     def parse_io_files(self, base_path):
-        # Load in input
-        with open('%s.input.js' % base_path) as f:
-            input = f.read()
+        # Load in input/output
+        with open('%s.js' % base_path) as f:
+            input_output = f.read()
 
-        # Break up target selection from content
-        input_obj = split_selection(input)
+        # Break up input and output
+        (input, expected_output) = re.split(r'---+', input_output)
 
-        # Load in single.output
-        with open('%s.output.js' % base_path) as f:
-            expected_output = f.read()
-
-        # Break up expected selection from content
-        expected_obj = split_selection(expected_output)
+        # Break up target and expected selection
+        input_obj = split_selection(input.strip())
+        expected_obj = split_selection(expected_output.strip())
 
         # Return collected information
         return {
