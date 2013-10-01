@@ -3,7 +3,6 @@ va|r abc,
 
 console.log(abc);
 ---
-| abc,
-     def;
+va|r def;
 
 console.log(abc);

@@ -118,6 +118,8 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
             # TODO: Optimization: Each loop, check that all vars are marked. If they are, exit it.
             # *****
 
+            # TODO: Break this down...
+
             # Generate a collection for each selection region
             for group in var_groups:
                 group['selections'] = []
