@@ -1,6 +1,7 @@
 # Load in core dependencies
 import json
 import os
+import re
 import subprocess
 import sublime
 import sublime_plugin
@@ -128,7 +129,7 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                         group['selections'].append(sel)
 
             # Create placeholder for deletion actions
-            delete_groups = []
+            delete_regions = []
 
             # Sort the groups into ascending order
             var_groups.sort(lambda a, b: a['start'] - b['start'])
@@ -157,11 +158,13 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                 for index in selected_indicies:
                     # TODO: Optimization: Binary search for lowest starting index (including 0)
                     # If we are before the first var, select the first var
+                    # var| abc, def;
                     if index < first_var['start']:
                         first_var['matched'] = True
                         continue
 
                     # If we are after the last var, select it
+                    # var abc, def|;
                     if index > last_var['end']:
                         last_var['matched'] = True
                         continue
@@ -171,13 +174,61 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                         # If we are in the var
                         if index >= var['start'] and index <= var['end']:
                             var['matched'] = True
+                            break
 
                         # Otherwise, if we are between this var and the next one
                         # DEV: var['next'] will be defined because we checked being after last_var['end']
                         elif index > var['end'] and index < var['next']['start']:
-                            # If we are before the separating comma
-                            next_nonwhitespace =
+                            # If we are before the separating comma, assume next var
+                            # var abc|, def;
+                            pattern = re.compile('\s+')
+                            next_nonwhitespace = pattern.search(script, var['end']).end(0)
+                            if next_nonwhitespace != var['next']['start']:
+                                var['matched'] = True
+                                break
+                            # Otherwise, assume next var
+                            # var abc,| def;
+                            else:
+                                var['next']['matched'] = True
+                                break
 
+                # If every var was matched, delete the group
+                every_var_matched = all(map(lambda var: var['matched'], vars))
+                if every_var_matched:
+                    delete_regions.append(group['region'])
+                # Otherwise
+                else:
+                    # Walk the vars
+                    break_encountered = False
+                    for var in vars:
+                        # If we are in a break, mark it
+                        if not var['matched']:
+                            break_encountered = True
+                            continue
+
+                        # If we are before the break, buffer on the right
+                        # var [^abc, ]def, ghi;
+                        if not break_encountered:
+                            var_end = var['end']
+                            pattern = re.compile('\s+')
+                            buffered_end = pattern.search(script, var_end).end(0)
+                            delete_regions.append(Region(var['start'], buffered_end))
+
+                        # Otherwise, (we are after the break), buffer on the left
+                        # var abc, def[, ^ghi];
+                        else:
+                            # TODO: We should be finding right rather than this?
+                            prev_var_start = var['prev']['start']
+                            pattern = re.compile('\s+')
+                            buffered_start = pattern.search(script, prev_var_start).end(0) + 1
+                            delete_regions.append(Region(buffered_start, var['end']))
+
+            # Reverse sort the deleted groups
+            delete_regions.sort(lambda a, b: b.begin() - a.begin())
+
+            # Delete them all @_@
+            for region in delete_regions:
+                view.erase(edit, region)
 
     def run_default(self):
         self.view.run_command("delete_word", {"forward": False})
