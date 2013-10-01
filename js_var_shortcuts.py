@@ -111,13 +111,8 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
             self.run_default()
         # Otherwise, if all of the selections are in a variable region
         elif all(in_var_region):
-            # *****
-            # TODO: New strategy, break selection down into indices.
-            # TODO: Iterate over indices, marking vars as used.
-            # TODO: Use buffer logic for indices not directly on vars.
             # TODO: Optimization: When a var is marked, skip all remaining indicies contained.
             # TODO: Optimization: Each loop, check that all vars are marked. If they are, exit it.
-            # *****
 
             # TODO: Break this down...
 
