@@ -43,6 +43,7 @@ class TestVarDelete(framework.TestCase):
         setattr(cls, 'test_var_delete_' + namespace, test_var_delete_fn)
 
 # Grab files to load in as tests
+# TODO: Clump input/output into a single file
 test_filenames = glob.glob(delete_dir + '/*.input.js')
 test_namespaces = map(lambda filename: (filename.replace(delete_dir + '/', '')
                                                 .replace('.input.js', '')), test_filenames)
@@ -53,11 +54,12 @@ skip_tests = [
     'same-line',  # TODO: Deal with nuance of cursor relocation during edit
     'multiline-middle',  # TODO: Deal with nuance of cursor relocation during edit
     'multiline-end-of-var',  # TODO: Deal with nuance of cursor relocation during edit
-    'multi-var',  # TODO: Interesting edge case for sets...
+    # 'multi-var',  # TODO: Interesting edge case for sets...
     'multiline-start',  # TODO: This is an arguable case... I will wait until the logic is done
 ]
 
-test_namespaces = ['multiline-last']
+# test_namespaces = ['multiline-last']
+test_namespaces = ['multi-var']
 
 # For each of the namespaces
 for namespace in test_namespaces:

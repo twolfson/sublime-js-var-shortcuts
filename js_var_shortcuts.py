@@ -108,13 +108,31 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
                     if group['region'].contains(sel):
                         group['selections'].append(sel)
 
-            # TODO: Sort the groups by region and iterate in reverse order to not fuck up indexes
-            # TODO: Determine if this deletions happen during or after the edit
-            print 'aaa', view.substr(Region(0, view.size()))
-            view.erase(edit, Region(0, 10))
-            print 'bbb', view.substr(Region(0, view.size()))
+            # Create placeholder for deletion actions
+            delete_groups = []
 
-            # TODO: Add ['prev'] and ['next'] properties for each var
+            # Sort the groups into ascending order
+            var_groups.sort(lambda a, b: a['start'] - b['start'])
+
+            # Add ['prev'] and ['next'] properties for each group
+            prev_group = None
+            for group in var_groups:
+                group['prev'] = prev_group
+                prev_group = group
+
+            last_group = group
+            while last_group:
+                group = last_group['prev']
+                if group:
+                    group['next'] = last_group
+                    last_group = group
+                else:
+                    last_group = None
+
+            print var_groups[0]
+
+            # Iterate over
+            # TODO: Add ['prev'] and ['next'] properties for each group
 
 
 
