@@ -2,6 +2,12 @@
 
 JS var shortcuts for Sublime Text
 
+This was built for (1) quickly setting up and tearing down variables, (2) proof of concept for [Sublime Text plugin testing framework][sublime-plugin-tests].
+
+> Currently, only tear down is supported.
+
+[sublime-plugin-tests]: https://github.com/twolfson/sublime-plugin-tests/
+
 ## Getting Started
 Install the module with: `npm install sublime-js-var-shortcuts`
 
