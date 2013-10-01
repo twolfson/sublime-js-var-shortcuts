@@ -3,3 +3,6 @@ var a|[bc,
     ghi]|;
 
 console.log(abc);
+---
+|
+console.log(abc);

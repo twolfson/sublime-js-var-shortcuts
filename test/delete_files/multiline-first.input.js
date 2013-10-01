@@ -3,3 +3,8 @@ var a|bc,
     ghi;
 
 console.log(abc);
+---
+var |def,
+    ghi;
+
+console.log(abc);
