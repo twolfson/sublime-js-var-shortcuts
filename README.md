@@ -1,6 +1,6 @@
 # sublime-js-var-shortcuts [![Build status](https://travis-ci.org/twolfson/sublime-js-var-shortcuts.png?branch=master)](https://travis-ci.org/twolfson/sublime-js-var-shortcuts)
 
-JS var shortcuts for [Sublime Text][]
+Insert and delete shortcuts for JavaScript variables in [Sublime Text][]
 
 This was built for (1) quickly setting up and tearing down variables, (2) proof of concept for [Sublime Text plugin testing framework][sublime-plugin-tests].
 
