@@ -155,6 +155,28 @@ class JsVarDeleteCommand(sublime_plugin.TextCommand):
 
                 # Iterate over the indicies
                 for index in selected_indicies:
+                    # TODO: Optimization: Binary search for lowest starting index (including 0)
+                    # If we are before the first var, select the first var
+                    if index < first_var['start']:
+                        first_var['matched'] = True
+                        continue
+
+                    # If we are after the last var, select it
+                    if index > last_var['end']:
+                        last_var['matched'] = True
+                        continue
+
+                    # Walk the vars
+                    for var in vars:
+                        # If we are in the var
+                        if index >= var['start'] and index <= var['end']:
+                            var['matched'] = True
+
+                        # Otherwise, if we are between this var and the next one
+                        # DEV: var['next'] will be defined because we checked being after last_var['end']
+                        elif index > var['end'] and index < var['next']['start']:
+                            # If we are before the separating comma
+                            next_nonwhitespace =
 
 
     def run_default(self):
