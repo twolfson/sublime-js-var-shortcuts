@@ -1,4 +1,6 @@
 # sublime-js-var-shortcuts changelog
+0.1.3 - Added variable assignment to screencast gif
+
 0.1.2 - Added Package Control messaging
 
 0.1.1 - Added documentation
